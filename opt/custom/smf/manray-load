@@ -1,0 +1,49 @@
+#!/usr/bin/bash
+
+usage() {
+    echo "Usage: $0 <start|stop>"
+    exit 1
+}
+
+PATRICK='/etc'
+WALLET='/usbkey'
+PERSISTENT_FILES=(/etc/passwd
+    /etc/group
+    /etc/shadow
+    /etc/user_attr
+    /etc/ouser_attr
+    /etc/security/policy.conf
+    /etc/security/auth_attr
+    /etc/security/exec_attr
+    /etc/security/prof_attr)
+
+if [ "$#" -ne 1 ]; then
+    usage
+fi
+
+COMMAND="$1"
+
+case "$COMMAND" in
+start)
+    bootparams | grep '^smartos=true' >/dev/null
+    if [ "$?" -eq 0 ]; then
+        for file in ${PERSISTENT_FILES[*]}; do
+            file_wallet="${WALLET}/$(basename file)"
+
+            if [ -e "$file_wallet" ]; then
+                touch "$file_wallet"
+            fi
+        done
+
+        # Workaround SmartOS misupdating /etc/user_attr at boot
+        if [ -e "${WALLET}/user_attr" ]; then
+            cp "${WALLET}/user_attr" "${PATRICK}/user_attr"
+        fi
+    fi
+    ;;
+stop) ;;
+
+*)
+    usage
+    ;;
+esac

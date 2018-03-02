@@ -1,0 +1,75 @@
+#!/bin/bash
+
+usage() {
+    echo "Usage: $0 <start|stop>"
+    exit 1
+}
+
+PATRICK='/etc'
+WALLET='/usbkey'
+PERSISTENT_FILES=(/etc/passwd
+    /etc/group
+    /etc/shadow
+    /etc/user_attr
+    /etc/ouser_attr
+    /etc/security/policy.conf
+    /etc/security/auth_attr
+    /etc/security/exec_attr
+    /etc/security/prof_attr)
+
+# Synchronize configuration files bidirectionally between a persisted manray wallet and read-only loopbacks.
+#
+# Usage: seal_wallet
+seal_wallet() {
+    bootparams | grep '^smartos=true' >/dev/null
+    if [ "$?" -eq 0 ]; then
+        for file in ${PERSISTENT_FILES[*]}; do
+            file_wallet="${WALLET}/$(basename $file)"
+
+            mount -p | grep "$file" >/dev/null
+            if [ "$?" -ne 0 ]; then
+                if [[ "$file" -ot "$file_wallet" ]]; then
+                    cp "$file_wallet" "$file"
+                else
+                    cp "$file" "$file_wallet"
+                fi
+
+                touch "$file" "$file_wallet"
+                mount -F lofs "$file_wallet" "$file"
+            fi
+        done
+    fi
+}
+
+# Retract the persisted wallet for a transiently writeable edition of configuration files.
+# Warning: Change will be lost a the next boot unless the wallet is explicitly sealed beforehand.
+#
+# Usage: unseal_wallet
+unseal_wallet() {
+    for file in ${PERSISTENT_FILES[*]}; do
+        file_wallet="${WALLET}/$(basename $file)"
+
+        mount -p | grep "$file" >/dev/null
+        if [ "$?" -eq 0 ]; then
+            umount "$file" && touch "$file"
+        fi
+    done
+}
+
+if [ "$#" -ne 1 ]; then
+    usage
+fi
+
+COMMAND="$1"
+
+case "$COMMAND" in
+start)
+    seal_wallet
+    ;;
+stop)
+    unseal_wallet
+    ;;
+*)
+    usage
+    ;;
+esac
