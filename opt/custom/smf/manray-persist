@@ -10,6 +10,7 @@ WALLET='/usbkey'
 PERSISTENT_FILES=(/etc/passwd
     /etc/group
     /etc/shadow
+    /etc/profile
     /etc/user_attr
     /etc/ouser_attr
     /etc/security/policy.conf
