@@ -27,8 +27,8 @@ Warning: Changes to UNIX accounts and RBAC configuration will be lost at next bo
 # INSTALL
 
 ```console
-$ curl -kLO https://github.com/mcandre/manray/releases/download/v0.0.1/manray-0.0.1.tgz
-$ tar xzvf manray-0.0.1.tgz -C /
+$ curl -kLO https://github.com/mcandre/manray/releases/download/v0.0.2/manray-0.0.2.tgz
+$ tar xzvf manray-0.0.2.tgz -C /
 $ svccfg import /opt/custom/smf/manray-load.xml
 $ svccfg import /opt/custom/smf/manray-persist.xml
 ```
