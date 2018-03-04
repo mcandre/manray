@@ -1,22 +1,12 @@
-#!/bin/bash
+#!/bin/sh
+
+SRC="${0%/*}"
+. "${SRC}/manray-vars.sh"
 
 usage() {
     echo "Usage: $0 <start|stop>"
     exit 1
 }
-
-PATRICK='/etc'
-WALLET='/usbkey'
-PERSISTENT_FILES=(/etc/passwd
-    /etc/group
-    /etc/shadow
-    /etc/profile
-    /etc/user_attr
-    /etc/ouser_attr
-    /etc/security/policy.conf
-    /etc/security/auth_attr
-    /etc/security/exec_attr
-    /etc/security/prof_attr)
 
 # Synchronize configuration files bidirectionally between a persisted manray wallet and read-only loopbacks.
 #
@@ -24,18 +14,12 @@ PERSISTENT_FILES=(/etc/passwd
 seal_wallet() {
     bootparams | grep '^smartos=true' >/dev/null
     if [ "$?" -eq 0 ]; then
-        for file in ${PERSISTENT_FILES[*]}; do
-            file_wallet="${WALLET}/$(basename $file)"
+        for file in ${MANRAY_PERSISTENT_FILES}; do
+            file_wallet="${MANRAY_WALLET}/$(basename $file)"
 
             mount -p | grep "$file" >/dev/null
             if [ "$?" -ne 0 ]; then
-                if [[ "$file" -ot "$file_wallet" ]]; then
-                    cp "$file_wallet" "$file"
-                else
-                    cp "$file" "$file_wallet"
-                fi
-
-                touch "$file" "$file_wallet"
+                cp "$file" "$file_wallet"
                 mount -F lofs "$file_wallet" "$file"
             fi
         done
@@ -47,12 +31,13 @@ seal_wallet() {
 #
 # Usage: unseal_wallet
 unseal_wallet() {
-    for file in ${PERSISTENT_FILES[*]}; do
-        file_wallet="${WALLET}/$(basename $file)"
+    for file in ${MANRAY_PERSISTENT_FILES}; do
+        file_wallet="${MANRAY_WALLET}/$(basename $file)"
 
         mount -p | grep "$file" >/dev/null
         if [ "$?" -eq 0 ]; then
-            umount "$file" && touch "$file"
+            umount "$file"
+            cp "$file_wallet" "$file"
         fi
     done
 }

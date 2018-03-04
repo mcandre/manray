@@ -1,22 +1,12 @@
-#!/usr/bin/bash
+#!/bin/sh
+
+SRC="${0%/*}"
+. "${SRC}/manray-vars.sh"
 
 usage() {
     echo "Usage: $0 <start|stop>"
     exit 1
 }
-
-PATRICK='/etc'
-WALLET='/usbkey'
-PERSISTENT_FILES=(/etc/passwd
-    /etc/group
-    /etc/shadow
-    /etc/profile
-    /etc/user_attr
-    /etc/ouser_attr
-    /etc/security/policy.conf
-    /etc/security/auth_attr
-    /etc/security/exec_attr
-    /etc/security/prof_attr)
 
 if [ "$#" -ne 1 ]; then
     usage
@@ -28,18 +18,15 @@ case "$COMMAND" in
 start)
     bootparams | grep '^smartos=true' >/dev/null
     if [ "$?" -eq 0 ]; then
-        for file in ${PERSISTENT_FILES[*]}; do
-            file_wallet="${WALLET}/$(basename file)"
+        for file in ${MANRAY_PERSISTENT_FILES}; do
+            file_wallet="${MANRAY_WALLET}/$(basename $file)"
 
-            if [ -e "$file_wallet" ]; then
-                touch "$file_wallet"
+            if [ ! -e "$file_wallet" ]; then
+                cp "$file" "$file_wallet"
             fi
-        done
 
-        # Workaround SmartOS misupdating /etc/user_attr at boot
-        if [ -e "${WALLET}/user_attr" ]; then
-            cp "${WALLET}/user_attr" "${PATRICK}/user_attr"
-        fi
+            cp "$file_wallet" "$file"
+        done
     fi
     ;;
 stop) ;;

@@ -1,9 +1,5 @@
 # manray: RBAC persistence for SmartOS global zones
 
-# DISCLAIMER
-
-Still investigating persistence bugs, stand by.
-
 # EXAMPLE
 
 ```console
