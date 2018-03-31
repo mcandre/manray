@@ -12,6 +12,8 @@ Re-enter new password: vagrant
 $ svcadm enable -s manray-persist
 ```
 
+![Manray hands Patrick his Wallet](https://raw.githubusercontent.com/mcandre/manray/master/manray.png)
+
 # ABOUT
 
 manray enables modifiable, persistent UNIX user accounts and RBAC configuration for SmartOS global zones, by providing a pair of boot time services: `manray-load` and `manray-persist`, that assist administrators in loading and persisting custom account information.
@@ -21,8 +23,6 @@ At boot, `manray-load` copies select configuration files from a `/usbkey` wallet
 While `manray-persist` is enabled, Patrick sees a read-only edition of `/etc` files. Administrators can disable `manray-persist`, which triggers writeable copies to be injected onto the system. Then, administrators can execute `passwd`, `usermod`, `groupadd`, and so on to modify UNIX user account and RBAC configuration. Finally, the administrator re-renables `manray-persist`, which backs up the configuration to `/usbkey`.
 
 Warning: Changes to UNIX accounts and RBAC configuration will be lost at next boot unless `manray-persist` is re-enabled beforehand.
-
-![Manray hands Patrick his Wallet](https://raw.githubusercontent.com/mcandre/manray/master/manray.png)
 
 # INSTALL
 
