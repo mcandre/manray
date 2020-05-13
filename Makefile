@@ -10,16 +10,13 @@ $(CHECKSUM): $(ARCHIVE)
 $(ARCHIVE): clean-archive opt/custom/smf/*.xml opt/custom/smf/manray-load opt/custom/smf/manray-persist
 	tar cv opt | gzip -n >manray-$(VERSION).tgz
 
-lint: shfmt bashate shlint checkbashisms shellcheck
+lint: shfmt bashate checkbashisms shellcheck
 
 shfmt:
 	stank . | xargs shfmt -w -i 4
 
 bashate:
 	stank . | xargs bashate
-
-shlint:
-	stank . | xargs shlint
 
 checkbashisms:
 	stank . | xargs checkbashisms -n -p

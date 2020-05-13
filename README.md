@@ -46,7 +46,6 @@ Warning: As SSL certificates are disregarded, the tarball should be verified aga
 * a build environment that preserves UNIX file permissions
 * [shfmt](https://github.com/mvdan/sh) (e.g. `go get mvdan.cc/sh/cmd/shfmt`)
 * [bashate](https://pypi.python.org/pypi/bashate/0.5.1)
-* [shlint](https://rubygems.org/gems/shlint)
 * [checkbashisms](https://sourceforge.net/projects/checkbaskisms/)
 * [ShellCheck](https://hackage.haskell.org/package/ShellCheck)
 * [stank](https://github.com/mcandre/stank) (e.g. `go get github.com/mcandre/stank/...`)
