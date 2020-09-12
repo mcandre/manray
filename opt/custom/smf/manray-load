@@ -3,6 +3,8 @@ unset IFS
 set -euf
 
 SRC="${0%/*}"
+
+# shellcheck source=/dev/null
 . "${SRC}/manray-vars.sh"
 
 usage() {
@@ -18,10 +20,9 @@ COMMAND="$1"
 
 case "$COMMAND" in
 start)
-    bootparams | grep '^smartos=true' >/dev/null
-    if [ "$?" -eq 0 ]; then
+    if bootparams | grep '^smartos=true' >/dev/null; then
         for file in ${MANRAY_PERSISTENT_FILES}; do
-            file_wallet="${MANRAY_WALLET}/$(basename $file)"
+            file_wallet="${MANRAY_WALLET}/$(basename "$file")"
 
             if [ ! -e "$file_wallet" ]; then
                 cp "$file" "$file_wallet"
